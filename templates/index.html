@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Real-time Polar Chart</title>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js" crossorigin="anonymous"
+            referrerpolicy="no-referrer"></script>
+</head>
+<body>
+<div id="chart"></div>
+<script>
+    var socket = io.connect('http://' + document.domain + ':' + location.port + '/test');
+    var layout = {polar: {radialaxis: {visible: true, range: [0, 5000]}, height: 1000, width: 1000}};
+    var config = {responsive: true};
+
+    Plotly.newPlot('chart', [{type: 'scatterpolar', mode: 'markers', marker: {size: 3}, r: [], theta: [], fill: '', connectgaps: false}], layout, config);
+
+    socket.on('update_chart', function (data) {
+        Plotly.update('chart', {r: [data.r], theta: [data.theta]});
+    });
+</script>
+</body>
+</html>
